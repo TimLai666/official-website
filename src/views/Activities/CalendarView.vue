@@ -256,6 +256,30 @@ const nextUpcoming = computed(() => {
     });
   return future.length ? future[0] : null;
 });
+
+// 分頁邏輯
+const currentPage = ref(0);
+const itemsPerPage = 3;
+
+const paginatedEvents = computed(() => {
+  const start = currentPage.value * itemsPerPage;
+  const end = start + itemsPerPage;
+  return groupedEvents.value.slice(start, end);
+});
+
+const totalPages = computed(() => Math.ceil(groupedEvents.value.length / itemsPerPage));
+
+function nextPage() {
+  if (currentPage.value < totalPages.value - 1) {
+    currentPage.value++;
+  }
+}
+
+function prevPage() {
+  if (currentPage.value > 0) {
+    currentPage.value--;
+  }
+}
 </script>
 
 <template>
@@ -436,8 +460,8 @@ const nextUpcoming = computed(() => {
 
           <div class="card p-3 mb-2">
             <h6 class="mb-2">近期活動</h6>
-            <div class="event-list overflow-auto">
-              <div v-for="group in groupedEvents" :key="group.date" class="mb-3">
+            <div class="event-list">
+              <div v-for="group in paginatedEvents" :key="group.date" class="mb-3">
                 <div class="fw-bold small mb-1">{{ group.date }}</div>
                 <ul class="list-unstyled mb-0">
                   <li v-for="ev in group.events" :key="ev.id"
@@ -459,6 +483,11 @@ const nextUpcoming = computed(() => {
                     <span class="badge bg-gradient-primary">{{ ev.tag }}</span>
                   </li>
                 </ul>
+              </div>
+              <div class="d-flex justify-content-center mt-3">
+                <button class="btn btn-sm btn-outline-primary me-2" @click="prevPage" :disabled="currentPage === 0">上一頁</button>
+                <span class="align-self-center">{{ currentPage + 1 }} / {{ totalPages }}</span>
+                <button class="btn btn-sm btn-outline-primary ms-2" @click="nextPage" :disabled="currentPage >= totalPages - 1">下一頁</button>
               </div>
             </div>
           </div>
@@ -614,7 +643,8 @@ const nextUpcoming = computed(() => {
 }
 
 .event-list {
-  max-height: 60vh;
+  height: 400px;
+  overflow: hidden;
 }
 
 .event-list .fw-bold {
@@ -728,8 +758,8 @@ const nextUpcoming = computed(() => {
 
 /* selected day highlight */
 .selected-day .cell-content {
-  background-color: rgba(99, 150, 255, 0.12);
-  border-left: 3px solid rgba(66, 133, 244, 0.9);
+  background-color: var(--accent-color);
+  border-left: 3px solid var(--primary-color);
 }
 
 /* clickable cell style */
@@ -822,9 +852,7 @@ const nextUpcoming = computed(() => {
 
 
   /* make recent events list taller on mobile so more items are visible before scrolling */
-  .event-list {
-    max-height: 85vh !important;
-  }
+  /* Removed max-height for fixed height pagination */
 }
 
 /* slide transition */
