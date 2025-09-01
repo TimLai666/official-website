@@ -356,8 +356,7 @@ const nextUpcoming = computed(() => {
                           </div>
                           <div class="mt-1 event-preview">
                             <!-- mobile: single dot if there's any event on this day -->
-                            <span v-if="eventsForDate(day).length" class="event-dot me-2 d-inline-block d-lg-none"
-                              aria-hidden="true"></span>
+                            <span v-if="eventsForDate(day).length" class="event-dot me-2 d-inline-block" aria-hidden="true"></span>
                             <!-- desktop: show full event list -->
                             <div v-for="ev in eventsForDate(day)" :key="ev.id"
                               class="event-item d-flex align-items-center event-preview-detail">
@@ -559,7 +558,20 @@ const nextUpcoming = computed(() => {
 /* small screens: reduce cell padding */
 @media (max-width: 576px) {
   .cell-content {
-    padding: 0.5rem;
+    padding: 0.25rem;
+  }
+
+  .date-number {
+    font-size: 0.8rem;
+  }
+
+  .event-dot {
+    width: 6px;
+    height: 6px;
+  }
+
+  .cell-inner {
+    padding-top: 130%;
   }
 }
 
@@ -834,10 +846,6 @@ const nextUpcoming = computed(() => {
 @media (min-width: 992px) {
 
   /* desktop: hide dot, show detail preview */
-  .event-dot {
-    display: none;
-  }
-
   .event-preview-detail {
     display: inline-flex;
   }
