@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from "vue";
 
 import NavbarDefault from "../../examples/navbars/NavbarDefault.vue";
 import DefaultFooter from "../../examples/footers/FooterDefault.vue";
+import ActivityCard from "./components/ActivityCard.vue";
 
 // sample events
 const events = ref([
@@ -17,7 +18,7 @@ const events = ref([
     url: "https://example.com/welcome-tea",
   }, {
     id: 1,
-    date: "2025-08-03",
+    date: "2025-09-03",
     title: "迎新茶會",
     time: "14:00",
     location: "活動中心",
@@ -238,6 +239,33 @@ const groupedEvents = computed(() => {
   }));
 });
 
+// groupedPastEvents: only include events whose datetime < now (precision to time)
+const groupedPastEvents = computed(() => {
+  const now = new Date();
+  const copy = events.value
+    .slice()
+    .filter((ev) => {
+      const dt = eventDateTime(ev);
+      return dt && dt < now;
+    })
+    .sort((a, b) => {
+      const da = eventDateTime(a);
+      const db = eventDateTime(b);
+      if (!da) return 1;
+      if (!db) return -1;
+      return db - da; // 歷史活動按日期降序
+    });
+  const map = new Map();
+  copy.forEach((ev) => {
+    if (!map.has(ev.date)) map.set(ev.date, []);
+    map.get(ev.date).push(ev);
+  });
+  return Array.from(map.entries()).map(([date, evs]) => ({
+    date,
+    events: evs,
+  }));
+});
+
 // the next upcoming single event (earliest datetime >= now)
 const nextUpcoming = computed(() => {
   const now = new Date();
@@ -256,30 +284,6 @@ const nextUpcoming = computed(() => {
     });
   return future.length ? future[0] : null;
 });
-
-// 分頁邏輯
-const currentPage = ref(0);
-const itemsPerPage = 3;
-
-const paginatedEvents = computed(() => {
-  const start = currentPage.value * itemsPerPage;
-  const end = start + itemsPerPage;
-  return groupedEvents.value.slice(start, end);
-});
-
-const totalPages = computed(() => Math.ceil(groupedEvents.value.length / itemsPerPage));
-
-function nextPage() {
-  if (currentPage.value < totalPages.value - 1) {
-    currentPage.value++;
-  }
-}
-
-function prevPage() {
-  if (currentPage.value > 0) {
-    currentPage.value--;
-  }
-}
 </script>
 
 <template>
@@ -458,39 +462,8 @@ function prevPage() {
             </div>
           </div>
 
-          <div class="card p-3 mb-2">
-            <h6 class="mb-2">近期活動</h6>
-            <div class="event-list">
-              <div v-for="group in paginatedEvents" :key="group.date" class="mb-3">
-                <div class="fw-bold small mb-1">{{ group.date }}</div>
-                <ul class="list-unstyled mb-0">
-                  <li v-for="ev in group.events" :key="ev.id"
-                    class="d-flex justify-content-between align-items-start py-1 border-bottom">
-                    <div>
-                      <div class="fw-bold">
-                        <template v-if="ev.url">
-                          <a :href="ev.url" target="_blank" rel="noopener" class="text-primary link-like">{{ ev.title
-                          }}</a>
-                        </template>
-                        <template v-else>
-                          <a href="#" @click.prevent="openDay(ev.date)" class="text-reset">{{ ev.title }}</a>
-                        </template>
-                      </div>
-                      <div class="text-sm text-muted">
-                        {{ ev.time }} • {{ ev.location }}
-                      </div>
-                    </div>
-                    <span class="badge bg-gradient-primary">{{ ev.tag }}</span>
-                  </li>
-                </ul>
-              </div>
-              <div class="d-flex justify-content-center mt-3">
-                <button class="btn btn-sm btn-outline-primary me-2" @click="prevPage" :disabled="currentPage === 0">上一頁</button>
-                <span class="align-self-center">{{ currentPage + 1 }} / {{ totalPages }}</span>
-                <button class="btn btn-sm btn-outline-primary ms-2" @click="nextPage" :disabled="currentPage >= totalPages - 1">下一頁</button>
-              </div>
-            </div>
-          </div>
+          <ActivityCard :title="'近期活動'" :events="groupedEvents" @openDay="openDay" />
+          <ActivityCard :title="'歷史活動'" :events="groupedPastEvents" @openDay="openDay" />
         </div>
       </div>
     </div>
