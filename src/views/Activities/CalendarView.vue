@@ -306,7 +306,7 @@ const nextUpcoming = computed(() => {
     <div class="container mt-4">
       <!-- desktop-only: show next upcoming event summary beside the calendar header -->
       <div class="next-upcoming d-none d-lg-block mb-3">
-        <div v-if="nextUpcoming" class="p-2 border border-1 rounded border-primary">
+        <div v-if="nextUpcoming" class="py-2 px-3 border border-1 rounded border-primary">
           <div class="text-bold">即將到來</div>
           <div class="mt-1">
             <template v-if="nextUpcoming.url">
@@ -324,7 +324,7 @@ const nextUpcoming = computed(() => {
         </div>
       </div>
       <div class="row">
-        <div class="col-lg-8 order-2 order-lg-1">
+        <div class="col-lg-8 order-2 order-lg-1 mb-1">
           <div class="card p-3">
             <div class="d-flex justify-content-between align-items-center mb-3">
               <div class="mx-auto d-flex align-items-baseline month-year-controls">
@@ -463,9 +463,11 @@ const nextUpcoming = computed(() => {
           </div>
 
           <ActivityCard :title="'近期活動'" :events="groupedEvents" @openDay="openDay" />
-          <ActivityCard :title="'歷史活動'" :events="groupedPastEvents" @openDay="openDay" />
+          
         </div>
+        
       </div>
+      <ActivityCard :title="'歷史活動'" :events="groupedPastEvents" @openDay="openDay" />
     </div>
 
     <!-- mobile drawer for selected day (only visible on small screens) -->
