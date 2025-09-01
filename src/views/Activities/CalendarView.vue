@@ -3,7 +3,6 @@ import { ref, computed, onMounted } from "vue";
 
 import NavbarDefault from "../../examples/navbars/NavbarDefault.vue";
 import DefaultFooter from "../../examples/footers/FooterDefault.vue";
-// MaterialButton not used in this view
 
 // sample events
 const events = ref([
@@ -269,28 +268,28 @@ const nextUpcoming = computed(() => {
       </div>
     </div>
 
-    <div class="page-header min-vh-25" style="background: linear-gradient(195deg, #6b7a8f, #2b2f3a)">
-      <div class="container py-5 text-white">
-        <h2 class="mb-1 mt-8 text-success">學生會活動行事曆</h2>
-        <p class="lead opacity-8">學生會活動</p>
+    <div class="page-header min-vh-25" style="background: linear-gradient(195deg, var(--primary-color), var(--accent-color));">
+      <div class="container py-5">
+        <h2 class="mb-1 mt-8 text-primary">學生會活動行事曆</h2>
+        <p class="lead opacity-8 text-bold">學生會活動</p>
       </div>
     </div>
 
     <div class="container mt-4">
       <!-- desktop-only: show next upcoming event summary beside the calendar header -->
       <div class="next-upcoming d-none d-lg-block mb-3">
-        <div v-if="nextUpcoming" class="p-2 border border-1 border-success rounded bg-light">
-          <div class="fw-bold">即將到來</div>
+        <div v-if="nextUpcoming" class="p-2 border border-1 rounded border-primary">
+          <div class="text-bold">即將到來</div>
           <div class="mt-1">
             <template v-if="nextUpcoming.url">
-              <a :href="nextUpcoming.url" target="_blank" rel="noopener" class="link-like text-success text-2xl">{{
+              <a :href="nextUpcoming.url" target="_blank" rel="noopener" class="link-like text-primary text-2xl">{{
                 nextUpcoming.title }}</a>
             </template>
             <template v-else>
               <a href="#" @click.prevent="openDay(nextUpcoming.date)" class="text-reset">{{ nextUpcoming.title }}</a>
             </template>
           </div>
-          <div class="small text-muted">
+          <div class="small">
             {{ nextUpcoming.date }} · {{ nextUpcoming.time }} ·
             {{ nextUpcoming.location }}
           </div>
@@ -300,9 +299,6 @@ const nextUpcoming = computed(() => {
         <div class="col-lg-8 order-2 order-lg-1">
           <div class="card p-3">
             <div class="d-flex justify-content-between align-items-center mb-3">
-              <!-- <div>
-                <small class="text-muted">點選日期以查看當日活動</small>
-              </div> -->
               <div class="mx-auto d-flex align-items-baseline month-year-controls">
                 <button class="btn btn-sm btn-outline-dark control-btn me-2" @click="prevMonth" aria-label="上個月">
                   ‹
@@ -318,7 +314,7 @@ const nextUpcoming = computed(() => {
                 <button class="btn btn-sm btn-outline-dark control-btn ms-2" @click="nextMonth" aria-label="下個月">
                   ›
                 </button>
-                <button class="btn btn-sm btn-success ms-3" @click="goToToday" aria-label="回到今日">
+                <button class="btn btn-sm btn-primary ms-3" @click="goToToday" aria-label="回到今日">
                   回到今日
                 </button>
               </div>
@@ -368,7 +364,7 @@ const nextUpcoming = computed(() => {
                               <span class="badge bg-gradient-info event-time">{{ ev.time }}</span>
                               <template v-if="ev.url">
                                 <a :href="ev.url" target="_blank" rel="noopener"
-                                  class="ms-1 event-title text-success link-like" @click.stop>{{ ev.title }}</a>
+                                  class="ms-1 event-title text-primary link-like" @click.stop>{{ ev.title }}</a>
                               </template>
                               <template v-else>
                                 <a href="#" @click.prevent.stop="openDay(day)" class="ms-1 event-title">{{ ev.title
@@ -413,7 +409,7 @@ const nextUpcoming = computed(() => {
                   <div>
                     <div class="fw-bold">
                       <template v-if="ev.url">
-                        <a :href="ev.url" target="_blank" rel="noopener" class="text-success link-like">{{ ev.title
+                        <a :href="ev.url" target="_blank" rel="noopener" class="text-primary link-like">{{ ev.title
                         }}</a>
                       </template>
                       <template v-else>
@@ -450,7 +446,7 @@ const nextUpcoming = computed(() => {
                     <div>
                       <div class="fw-bold">
                         <template v-if="ev.url">
-                          <a :href="ev.url" target="_blank" rel="noopener" class="text-success link-like">{{ ev.title
+                          <a :href="ev.url" target="_blank" rel="noopener" class="text-primary link-like">{{ ev.title
                           }}</a>
                         </template>
                         <template v-else>
@@ -502,7 +498,7 @@ const nextUpcoming = computed(() => {
             <div v-for="ev in eventsForDate(selectedDay)" :key="ev.id" class="mb-3">
               <div class="fw-bold">
                 <template v-if="ev.url">
-                  <a :href="ev.url" target="_blank" rel="noopener" class="text-success link-like">{{ ev.title }}</a>
+                  <a :href="ev.url" target="_blank" rel="noopener" class="text-primary link-like">{{ ev.title }}</a>
                 </template>
                 <template v-else>
                   <a href="#" @click.prevent="openDay(ev.date)" class="text-reset">{{ ev.title }}</a>
