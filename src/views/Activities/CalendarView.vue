@@ -3,7 +3,7 @@ import { ref, computed, onMounted } from "vue";
 
 import NavbarDefault from "../../examples/navbars/NavbarDefault.vue";
 import DefaultFooter from "../../examples/footers/FooterDefault.vue";
-// MaterialButton not used in this view
+import ActivityCard from "./components/ActivityCard.vue";
 
 // sample events
 const events = ref([
@@ -18,7 +18,7 @@ const events = ref([
     url: "https://example.com/welcome-tea",
   }, {
     id: 1,
-    date: "2025-08-03",
+    date: "2025-09-03",
     title: "迎新茶會",
     time: "14:00",
     location: "活動中心",
@@ -239,6 +239,33 @@ const groupedEvents = computed(() => {
   }));
 });
 
+// groupedPastEvents: only include events whose datetime < now (precision to time)
+const groupedPastEvents = computed(() => {
+  const now = new Date();
+  const copy = events.value
+    .slice()
+    .filter((ev) => {
+      const dt = eventDateTime(ev);
+      return dt && dt < now;
+    })
+    .sort((a, b) => {
+      const da = eventDateTime(a);
+      const db = eventDateTime(b);
+      if (!da) return 1;
+      if (!db) return -1;
+      return db - da; // 歷史活動按日期降序
+    });
+  const map = new Map();
+  copy.forEach((ev) => {
+    if (!map.has(ev.date)) map.set(ev.date, []);
+    map.get(ev.date).push(ev);
+  });
+  return Array.from(map.entries()).map(([date, evs]) => ({
+    date,
+    events: evs,
+  }));
+});
+
 // the next upcoming single event (earliest datetime >= now)
 const nextUpcoming = computed(() => {
   const now = new Date();
@@ -269,40 +296,37 @@ const nextUpcoming = computed(() => {
       </div>
     </div>
 
-    <div class="page-header min-vh-25" style="background: linear-gradient(195deg, #6b7a8f, #2b2f3a)">
-      <div class="container py-5 text-white">
-        <h2 class="mb-1 mt-8 text-success">學生會活動行事曆</h2>
-        <p class="lead opacity-8">學生會活動</p>
+    <div class="page-header min-vh-25" style="background: linear-gradient(195deg, var(--primary-color), var(--accent-color));">
+      <div class="container py-5">
+        <h2 class="mb-1 mt-8 text-primary">學生會活動行事曆</h2>
+        <p class="lead opacity-8 text-bold">學生會活動</p>
       </div>
     </div>
 
     <div class="container mt-4">
       <!-- desktop-only: show next upcoming event summary beside the calendar header -->
       <div class="next-upcoming d-none d-lg-block mb-3">
-        <div v-if="nextUpcoming" class="p-2 border border-1 border-success rounded bg-light">
-          <div class="fw-bold">即將到來</div>
+        <div v-if="nextUpcoming" class="py-2 px-3 border border-1 rounded border-primary">
+          <div class="text-bold">即將到來</div>
           <div class="mt-1">
             <template v-if="nextUpcoming.url">
-              <a :href="nextUpcoming.url" target="_blank" rel="noopener" class="link-like text-success text-2xl">{{
+              <a :href="nextUpcoming.url" target="_blank" rel="noopener" class="link-like text-primary text-2xl">{{
                 nextUpcoming.title }}</a>
             </template>
             <template v-else>
               <a href="#" @click.prevent="openDay(nextUpcoming.date)" class="text-reset">{{ nextUpcoming.title }}</a>
             </template>
           </div>
-          <div class="small text-muted">
+          <div class="small">
             {{ nextUpcoming.date }} · {{ nextUpcoming.time }} ·
             {{ nextUpcoming.location }}
           </div>
         </div>
       </div>
       <div class="row">
-        <div class="col-lg-8 order-2 order-lg-1">
+        <div class="col-lg-8 order-2 order-lg-1 mb-1">
           <div class="card p-3">
             <div class="d-flex justify-content-between align-items-center mb-3">
-              <!-- <div>
-                <small class="text-muted">點選日期以查看當日活動</small>
-              </div> -->
               <div class="mx-auto d-flex align-items-baseline month-year-controls">
                 <button class="btn btn-sm btn-outline-dark control-btn me-2" @click="prevMonth" aria-label="上個月">
                   ‹
@@ -318,7 +342,7 @@ const nextUpcoming = computed(() => {
                 <button class="btn btn-sm btn-outline-dark control-btn ms-2" @click="nextMonth" aria-label="下個月">
                   ›
                 </button>
-                <button class="btn btn-sm btn-success ms-3" @click="goToToday" aria-label="回到今日">
+                <button class="btn btn-sm btn-primary ms-3" @click="goToToday" aria-label="回到今日">
                   回到今日
                 </button>
               </div>
@@ -360,15 +384,14 @@ const nextUpcoming = computed(() => {
                           </div>
                           <div class="mt-1 event-preview">
                             <!-- mobile: single dot if there's any event on this day -->
-                            <span v-if="eventsForDate(day).length" class="event-dot me-2 d-inline-block d-lg-none"
-                              aria-hidden="true"></span>
+                            <span v-if="eventsForDate(day).length" class="event-dot me-2 d-inline-block" aria-hidden="true"></span>
                             <!-- desktop: show full event list -->
                             <div v-for="ev in eventsForDate(day)" :key="ev.id"
                               class="event-item d-flex align-items-center event-preview-detail">
                               <span class="badge bg-gradient-info event-time">{{ ev.time }}</span>
                               <template v-if="ev.url">
                                 <a :href="ev.url" target="_blank" rel="noopener"
-                                  class="ms-1 event-title text-success link-like" @click.stop>{{ ev.title }}</a>
+                                  class="ms-1 event-title text-primary link-like" @click.stop>{{ ev.title }}</a>
                               </template>
                               <template v-else>
                                 <a href="#" @click.prevent.stop="openDay(day)" class="ms-1 event-title">{{ ev.title
@@ -413,7 +436,7 @@ const nextUpcoming = computed(() => {
                   <div>
                     <div class="fw-bold">
                       <template v-if="ev.url">
-                        <a :href="ev.url" target="_blank" rel="noopener" class="text-success link-like">{{ ev.title
+                        <a :href="ev.url" target="_blank" rel="noopener" class="text-primary link-like">{{ ev.title
                         }}</a>
                       </template>
                       <template v-else>
@@ -439,36 +462,12 @@ const nextUpcoming = computed(() => {
             </div>
           </div>
 
-          <div class="card p-3 mb-2">
-            <h6 class="mb-2">近期活動</h6>
-            <div class="event-list overflow-auto">
-              <div v-for="group in groupedEvents" :key="group.date" class="mb-3">
-                <div class="fw-bold small mb-1">{{ group.date }}</div>
-                <ul class="list-unstyled mb-0">
-                  <li v-for="ev in group.events" :key="ev.id"
-                    class="d-flex justify-content-between align-items-start py-1 border-bottom">
-                    <div>
-                      <div class="fw-bold">
-                        <template v-if="ev.url">
-                          <a :href="ev.url" target="_blank" rel="noopener" class="text-success link-like">{{ ev.title
-                          }}</a>
-                        </template>
-                        <template v-else>
-                          <a href="#" @click.prevent="openDay(ev.date)" class="text-reset">{{ ev.title }}</a>
-                        </template>
-                      </div>
-                      <div class="text-sm text-muted">
-                        {{ ev.time }} • {{ ev.location }}
-                      </div>
-                    </div>
-                    <span class="badge bg-gradient-primary">{{ ev.tag }}</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
+          <ActivityCard :title="'近期活動'" :events="groupedEvents" @openDay="openDay" />
+          
         </div>
+        
       </div>
+      <ActivityCard :title="'歷史活動'" :events="groupedPastEvents" @openDay="openDay" />
     </div>
 
     <!-- mobile drawer for selected day (only visible on small screens) -->
@@ -502,7 +501,7 @@ const nextUpcoming = computed(() => {
             <div v-for="ev in eventsForDate(selectedDay)" :key="ev.id" class="mb-3">
               <div class="fw-bold">
                 <template v-if="ev.url">
-                  <a :href="ev.url" target="_blank" rel="noopener" class="text-success link-like">{{ ev.title }}</a>
+                  <a :href="ev.url" target="_blank" rel="noopener" class="text-primary link-like">{{ ev.title }}</a>
                 </template>
                 <template v-else>
                   <a href="#" @click.prevent="openDay(ev.date)" class="text-reset">{{ ev.title }}</a>
@@ -563,7 +562,20 @@ const nextUpcoming = computed(() => {
 /* small screens: reduce cell padding */
 @media (max-width: 576px) {
   .cell-content {
-    padding: 0.5rem;
+    padding: 0.25rem;
+  }
+
+  .date-number {
+    font-size: 0.8rem;
+  }
+
+  .event-dot {
+    width: 6px;
+    height: 6px;
+  }
+
+  .cell-inner {
+    padding-top: 130%;
   }
 }
 
@@ -606,7 +618,8 @@ const nextUpcoming = computed(() => {
 }
 
 .event-list {
-  max-height: 60vh;
+  height: 400px;
+  overflow: hidden;
 }
 
 .event-list .fw-bold {
@@ -720,8 +733,8 @@ const nextUpcoming = computed(() => {
 
 /* selected day highlight */
 .selected-day .cell-content {
-  background-color: rgba(99, 150, 255, 0.12);
-  border-left: 3px solid rgba(66, 133, 244, 0.9);
+  background-color: var(--accent-color);
+  border-left: 3px solid var(--primary-color);
 }
 
 /* clickable cell style */
@@ -814,9 +827,7 @@ const nextUpcoming = computed(() => {
 
 
   /* make recent events list taller on mobile so more items are visible before scrolling */
-  .event-list {
-    max-height: 85vh !important;
-  }
+  /* Removed max-height for fixed height pagination */
 }
 
 /* slide transition */
@@ -838,10 +849,6 @@ const nextUpcoming = computed(() => {
 @media (min-width: 992px) {
 
   /* desktop: hide dot, show detail preview */
-  .event-dot {
-    display: none;
-  }
-
   .event-preview-detail {
     display: inline-flex;
   }
