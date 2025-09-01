@@ -299,7 +299,7 @@ const nextUpcoming = computed(() => {
     <div class="page-header min-vh-25" style="background: linear-gradient(195deg, var(--primary-color), var(--accent-color));">
       <div class="container py-5">
         <h2 class="mb-1 mt-8 text-primary">學生會活動行事曆</h2>
-        <p class="lead opacity-8 text-bold">學生會活動</p>
+        <p class="lead opacity-8 text-bold">學生會活動攏佇遮~</p>
       </div>
     </div>
 
