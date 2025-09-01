@@ -83,7 +83,7 @@ const getDayOfWeek = (dateString) => {
       </div>
       <div v-if="props.events.length > 0" class="d-flex justify-content-center mt-3">
         <button class="btn btn-sm btn-outline-primary me-2" @click="prevPage" :disabled="currentPage === 0">上一頁</button>
-        <span class="align-self-center">{{ currentPage + 1 }} / {{ totalPages }}</span>
+        <p class="align-self-center">{{ currentPage + 1 }} / {{ totalPages }}</p>
         <button class="btn btn-sm btn-outline-primary ms-2" @click="nextPage"
           :disabled="currentPage >= totalPages - 1">下一頁</button>
       </div>
