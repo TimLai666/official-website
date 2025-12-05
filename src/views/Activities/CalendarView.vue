@@ -1,5 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
+// import page header banner image
+import headerImage from './assets/img/活動行事曆橫幅.jpg';
 
 import NavbarDefault from "../../examples/navbars/NavbarDefault.vue";
 import DefaultFooter from "../../examples/footers/FooterDefault.vue";
@@ -296,10 +298,14 @@ const nextUpcoming = computed(() => {
       </div>
     </div>
 
-    <div class="page-header min-vh-25" style="background: linear-gradient(195deg, var(--primary-color), var(--accent-color));">
+    <div class="page-header min-vh-25"
+      :style="{ backgroundImage: 'url(' + headerImage + ')', backgroundSize: 'cover', backgroundPosition: 'center' }">
       <div class="container py-5">
-        <h2 class="mb-1 mt-8 text-primary">學生會活動行事曆</h2>
-        <p class="lead opacity-8 text-bold">學生會活動攏佇遮~</p>
+        <div class="box bg-white text-center mx-auto rounded"
+          style="max-width: 400px; border-radius: 0.75rem; opacity: 0.9;">
+          <h2 class="mb-1 mt-10 text-primary">學生會活動行事曆</h2>
+          <p class="lead opacity-8 text-bold">學生會活動攏佇遮~</p>
+        </div>
       </div>
     </div>
 
@@ -384,7 +390,8 @@ const nextUpcoming = computed(() => {
                           </div>
                           <div class="mt-1 event-preview">
                             <!-- mobile: single dot if there's any event on this day -->
-                            <span v-if="eventsForDate(day).length" class="event-dot me-2 d-inline-block" aria-hidden="true"></span>
+                            <span v-if="eventsForDate(day).length" class="event-dot me-2 d-inline-block"
+                              aria-hidden="true"></span>
                             <!-- desktop: show full event list -->
                             <div v-for="ev in eventsForDate(day)" :key="ev.id"
                               class="event-item d-flex align-items-center event-preview-detail">
@@ -463,9 +470,9 @@ const nextUpcoming = computed(() => {
           </div>
 
           <ActivityCard :title="'近期活動'" :events="groupedEvents" @openDay="openDay" />
-          
+
         </div>
-        
+
       </div>
       <ActivityCard :title="'歷史活動'" :events="groupedPastEvents" @openDay="openDay" />
     </div>
@@ -538,6 +545,27 @@ const nextUpcoming = computed(() => {
 .table-fixed th {
   padding: 0.25rem !important;
   vertical-align: top;
+}
+
+/* page header background styling */
+.page-header {
+  position: relative;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+.page-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.18);
+  z-index: 0;
+}
+
+.page-header .container {
+  position: relative;
+  z-index: 1;
 }
 
 /* wrapper that creates a square by padding-top trick */
