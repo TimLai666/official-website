@@ -456,7 +456,7 @@ const nextUpcoming = computed(() => {
                     <div class="text-sm mt-1">{{ ev.description }}</div>
                   </div>
                   <div>
-                    <span class="badge bg-gradient-primary">{{ ev.tag }}</span>
+                    <span class="badge event-category-badge">{{ ev.tag }}</span>
                   </div>
                 </div>
               </div>
@@ -733,6 +733,10 @@ const nextUpcoming = computed(() => {
   align-items: center;
   padding-left: 12px;
   padding-right: 12px;
+}
+
+.event-category-badge {
+  background-color: #ff71a7;
 }
 
 /* reduce busy-ness on small screens */

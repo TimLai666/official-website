@@ -74,7 +74,7 @@ const getDayOfWeek = (dateString) => {
                 {{ ev.time }} • {{ ev.location }}
               </div>
             </div>
-            <span class="badge bg-gradient-primary">{{ ev.tag }}</span>
+            <span class="badge event-category-badge">{{ ev.tag }}</span>
           </li>
         </ul>
       </div>
@@ -109,5 +109,10 @@ const getDayOfWeek = (dateString) => {
 .link-like:hover {
   color: var(--bs-danger, #dc3545) !important;
   text-decoration: underline;
+}
+
+.event-category-badge {
+  background-color: #ff71a7;
+  align-self: center;
 }
 </style>
