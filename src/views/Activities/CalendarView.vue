@@ -301,7 +301,7 @@ const nextUpcoming = computed(() => {
     <div class="page-header min-vh-25"
       :style="{ background:`linear-gradient(#ffffff99), url('${headerImage}')`, backgroundSize: 'cover', backgroundPosition: 'center' }">
       <div class="container py-5">
-        <div class="box bg-white text-center mx-auto rounded"
+        <div class="box text-center mx-auto rounded"
           style="max-width: 400px; border-radius: 0.75rem; opacity: 0.9;">
           <h2 class="mb-1 mt-10 text-primary">學生會活動行事曆</h2>
           <p class="lead opacity-8 text-bold">學生會活動攏佇遮~</p>
