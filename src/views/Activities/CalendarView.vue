@@ -299,7 +299,7 @@ const nextUpcoming = computed(() => {
     </div>
 
     <div class="page-header min-vh-25"
-      :style="{ backgroundImage: 'url(' + headerImage + ')', backgroundSize: 'cover', backgroundPosition: 'center' }">
+      :style="{ background:`linear-gradient(#ffffff99), url('${headerImage}')`, backgroundSize: 'cover', backgroundPosition: 'center' }">
       <div class="container py-5">
         <div class="box bg-white text-center mx-auto rounded"
           style="max-width: 400px; border-radius: 0.75rem; opacity: 0.9;">
